@@ -1,0 +1,16 @@
+# Groups entries in GitHub's auto-generated release notes (used by the
+# generate_release_notes step in release.yml). Merged PRs are sorted into the
+# sections below by their labels; label your PRs accordingly.
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Features
+      labels: [feature, enhancement]
+    - title: Bug Fixes
+      labels: [bug, fix]
+    - title: Maintenance
+      labels: [chore, ci, docs, refactor]
+    - title: Other Changes
+      labels: ["*"]
