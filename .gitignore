@@ -1,0 +1,11 @@
+# Build output
+/build/
+/out/
+
+# Test artifacts
+/testdata/
+
+# Editor/OS
+.vs/
+*.user
+/.agents

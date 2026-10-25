@@ -1,0 +1,41 @@
+name: Release
+
+# Cut a GitHub Release whenever a version tag is pushed, e.g.:
+#   git tag v1.0.0 && git push origin v1.0.0
+# The job builds the Release binaries, zips them, and attaches the zip to a
+# Release named for the tag.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # required for the release action to create the Release
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      # Stage the binaries under a tag-stamped folder name and zip them, so the
+      # archive extracts into a clearly named directory rather than loose exes.
+      - name: Package
+        shell: pwsh
+        run: |
+          $name = "bin2iso-$($env:GITHUB_REF_NAME)-windows-x64"
+          New-Item -ItemType Directory -Path $name | Out-Null
+          Copy-Item build/Release/bin2iso.exe, build/Release/bin2iso_gui.exe $name
+          Compress-Archive -Path $name -DestinationPath "$name.zip"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Auto-generate the notes from commits since the previous tag.
+          generate_release_notes: true
+          files: bin2iso-*-windows-x64.zip
